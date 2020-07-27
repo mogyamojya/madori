@@ -39,6 +39,7 @@
       }
 
       .stage{
+        position: relative;
         width: 1000px;
         height: 500px;
         margin: 20px auto 0;
@@ -90,8 +91,13 @@
             } else {
                 var event = e.changedTouches[0];
             }
+            //event.pageXはクリックした時のウィンドウ左からの座標
+            //this.offsetLeftは今の.dragのoffsetParentとなる要素のpaddingの左端部分から、その要素のborderの左端部分までの幅
+            //offsetParentとは、「直近の、動的に位置が調整される自分を囲う要素」position:relativeなどが設定されているもの
             x = event.pageX - this.offsetLeft;
             y = event.pageY - this.offsetTop;
+            //console.log(event.pageX);
+            //console.log(this.offsetLeft);
             document.body.addEventListener("mousemove", mmove, false);
             document.body.addEventListener("touchmove", mmove, false);
           }
@@ -106,12 +112,29 @@
 
             e.preventDefault();
 
-            drag.style.top = event.pageY - y + "px";
-            drag.style.left = event.pageX - x + "px";
+            //var dragPosition = drag.getBoundingClientRect();
+            var moveY = event.pageY - y + "px";
+            var moveX = event.pageX - x + "px";
+            //var windowWidth = window.innerWidth;
+            //stageWidth = stage.offsetWidth;
+            //var windowStageDiff = (windowWidth - stageWidth) / 2;
+            // if(dragPosition.left <= windowStageDiff){
+            // }
+            //if(this.offsetLeft >= 0){
+              drag.style.top = moveY;
+              drag.style.left = moveX;
+              drag.addEventListener("mouseup", mup, false);
+              drag.addEventListener("touchend", mup, false);
+              document.body.addEventListener("touchleave", mup, false);
+            //}
+            // console.log(windowStageDiff);
+            // var log = console.log(windowStageDiff);
+            // window.addEventListener("resize", log, false);
 
-            drag.addEventListener("mouseup", mup, false);
-            drag.addEventListener("touchend", mup, false);
-            document.body.addEventListener("touchleave", mup, false);
+            //drag.style.top = moveY;
+            //drag.style.left = moveX;
+
+
 
           }
           function mup(e) {
@@ -131,6 +154,7 @@
             let hsl = 'hsl(' + hue + ',100%,'+ Lightness +'%)';
             return hsl;
           }
+          
 
       })();
     </script>
