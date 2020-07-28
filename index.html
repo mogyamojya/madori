@@ -87,56 +87,67 @@
           function mdown(e) {
             this.classList.add("drag");
             if(e.type === "mousedown") {
-                var event = e;
+              var event = e;
             } else {
-                var event = e.changedTouches[0];
+              var event = e.changedTouches[0];
             }
             //event.pageXはクリックした時のウィンドウ左からの座標
             //this.offsetLeftは今の.dragのoffsetParentとなる要素のpaddingの左端部分から、その要素のborderの左端部分までの幅
             //offsetParentとは、「直近の、動的に位置が調整される自分を囲う要素」position:relativeなどが設定されているもの
             x = event.pageX - this.offsetLeft;
             y = event.pageY - this.offsetTop;
-            //console.log(event.pageX);
-            //console.log(this.offsetLeft);
             document.body.addEventListener("mousemove", mmove, false);
             document.body.addEventListener("touchmove", mmove, false);
           }
+
+
           function mmove(e) {
             var drag = document.getElementsByClassName("drag")[0];
-
-            if(e.type === "mousemove") {
+            if(e.type === "mousemove"){
                 var event = e;
             } else {
                 var event = e.changedTouches[0];
             }
-
             e.preventDefault();
+            var moveY = event.pageY - y;
+            console.log(moveY);
+            var moveX = event.pageX - x;
+            console.log(moveX);
+            console.log('stage.topは' + stage.top);
 
-            //var dragPosition = drag.getBoundingClientRect();
-            var moveY = event.pageY - y + "px";
-            var moveX = event.pageX - x + "px";
-            //var windowWidth = window.innerWidth;
-            //stageWidth = stage.offsetWidth;
-            //var windowStageDiff = (windowWidth - stageWidth) / 2;
-            // if(dragPosition.left <= windowStageDiff){
-            // }
-            //if(this.offsetLeft >= 0){
-              drag.style.top = moveY;
-              drag.style.left = moveX;
-              drag.addEventListener("mouseup", mup, false);
-              drag.addEventListener("touchend", mup, false);
-              document.body.addEventListener("touchleave", mup, false);
-            //}
-            // console.log(windowStageDiff);
-            // var log = console.log(windowStageDiff);
-            // window.addEventListener("resize", log, false);
+            stageTop = stage.offsetTop;
+            stageLeft = stage.offsetLeft;
+            dragTop = drag.offsetTop;
+            dragLeft = drag.offsetLeft;
 
-            //drag.style.top = moveY;
-            //drag.style.left = moveX;
+            if(stageTop > dragTop){
+              moveY += stageTop - dragTop;
+              console.log('moveYは' + moveY);
+            }
+            if(stageLeft > dragLeft){
+              moveX += stageLeft - dragLeft;
+              console.log('moveXは' + moveX);
+            }
+            if((stageTop + stage.height) < (dragTop + drag.height)){
+              moveY  +=  (stageTop + stage.height) - (dragTop + drag.height);
+              console.log('moveYは' + moveY);
+            }
+            if((stageLeft + stage.width) < (dragLeft + drag.width)){
+              moveX +=  (stageLeft + stage.width) - (dragLeft + drag.width);
+              console.log('moveXは' + moveX);
+            }
+            if(moveY != 0){drag.style.top  = moveY + "px";}
+            if(moveX != 0){drag.style.left = moveX + "px";}
+            //
 
-
-
+            // drag.style.top = moveY;
+            // drag.style.left = moveX;
+            drag.addEventListener("mouseup", mup, false);
+            drag.addEventListener("touchend", mup, false);
+            document.body.addEventListener("touchleave", mup, false);
+            console.log('うごき');
           }
+
           function mup(e) {
             var drag = document.getElementsByClassName("drag")[0];
 
